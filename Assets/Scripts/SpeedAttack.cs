@@ -22,8 +22,8 @@ public class SpeedAttack : StateMachineBehaviour
         // PlayerController.instance.UseSkillDone();
         // PlayerController.instance.DeactivateAttackPoint(4);
         if (animator.name == "Alphabet") {
-            AlphabetController.instance.UseSkillDone();
-            AlphabetController.instance.DeactivateAttackPoint(4);
+            AlphabetController.Instance.UseSkillDone();
+            AlphabetController.Instance.DeactivateAttackPoint(4);
         } else if (animator.name == "Arrow") {
             ArrowController.instance.UseSkillDone();
             ArrowController.instance.DeactivateAttackPoint(4);

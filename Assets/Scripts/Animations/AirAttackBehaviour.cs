@@ -22,8 +22,8 @@ public class AirAttackBehaviour : StateMachineBehaviour
         // PlayerController.instance.DeactivateAttackPoint(0);
         // PlayerController.instance.AttackDone();
         if (animator.name == "Alphabet") {
-            AlphabetController.instance.DeactivateAttackPoint(0);
-            AlphabetController.instance.AttackDone();
+            AlphabetController.Instance.DeactivateAttackPoint(0);
+            AlphabetController.Instance.AttackDone();
         } else if (animator.name == "Arrow") {
             ArrowController.instance.DeactivateAttackPoint(0);
             ArrowController.instance.AttackDone();

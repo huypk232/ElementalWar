@@ -1,26 +1,26 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class AlphabetController : MonoBehaviour
 {
-    public static AlphabetController instance;
+    public static AlphabetController Instance;
     
     public bool canReceiveInput;
     public bool inputReceived;
-
-    // ? public
-    public bool _isUsingSkill = false;
-    public bool _attacking = false;
-    public bool _blocking = false;
+    
+    [SerializeField] private bool isUsingSkill = false;
+    [SerializeField] private bool attacking = false;
+    [SerializeField] private bool blocking = false;
 
     private Rigidbody2D _rb;
     private Animator _animator;
     private SpriteRenderer _renderer;
     private GroundSensor _groundSensor;
-    private float _moveSpeed = 5f;
-    private float _blendMoveSpeedAnimation = 10f;
-    private float _jumpForce = 7.5f;
+    private const float MoveSpeed = 5f;
+    private const float BlendMoveSpeedAnimation = 10f;
+    private const float JumpForce = 7.5f;
     private bool _grounded = false;
     private float _blockDeltaTime = 0.2f;
     private float _lastDirection = 1; // todo refactor to enum
@@ -29,13 +29,19 @@ public class AlphabetController : MonoBehaviour
     private GameObject _attackArea2;
     private GameObject _attackArea3;
     private GameObject _ultimateAttackArea;
+    
+    [Header("Animation")]
+    private static readonly int Moving = Animator.StringToHash("Moving");
+
+    private static readonly int Block = Animator.StringToHash("Block");
+    private static readonly int HoldBlock = Animator.StringToHash("HoldBlock");
 
     private void Awake() {
-        if (instance == null)
-            instance = this;
-        else if (instance != this) {
-            Destroy(instance.gameObject);
-            instance = this;
+        if (Instance == null)
+            Instance = this;
+        else if (Instance != this) {
+            Destroy(Instance.gameObject);
+            Instance = this;
         }
     }
 
@@ -61,7 +67,7 @@ public class AlphabetController : MonoBehaviour
         AttackCombo();
         UseSkill();
         Death();
-        Block();
+        Defense();
     }
 
     private void CheckGround()
@@ -80,7 +86,7 @@ public class AlphabetController : MonoBehaviour
         if(_grounded)
         {
             if(Input.GetKeyDown(KeyCode.J)) {
-                _attacking = true;
+                attacking = true;
                 if (canReceiveInput) {
                     inputReceived = true;
                     canReceiveInput = false;
@@ -88,7 +94,7 @@ public class AlphabetController : MonoBehaviour
             }
         } else {
             if(Input.GetKeyDown(KeyCode.J)) {
-                _attacking = true;
+                attacking = true;
                 _animator.Play("AirAttack");
                 ActivateAttackPoint(0);
             }
@@ -129,22 +135,22 @@ public class AlphabetController : MonoBehaviour
 
     private void Move()
     {
-        if (_isUsingSkill || _blocking) return;
+        if (isUsingSkill || blocking) return;
         float horizontal = Input.GetAxis("Horizontal1");
-        if (horizontal * _lastDirection < 0 && _attacking) return;
+        if (horizontal * _lastDirection < 0 && attacking) return;
         if(horizontal < 0) {
             transform.localScale = new Vector3(-1, 1, 1);
         } else if(horizontal > 0) {
             transform.localScale = new Vector3(1, 1, 1);
         }
-        _animator.SetFloat("MoveSpeed", _blendMoveSpeedAnimation * Mathf.Abs(horizontal));  // todo check
+        _animator.SetFloat("MoveSpeed", BlendMoveSpeedAnimation * Mathf.Abs(horizontal));  // todo check
         if (horizontal == 0) {
-            _animator.SetBool("Moving", false);
+            _animator.SetBool(Moving, false);
         } else {
             _lastDirection = horizontal;
-            _animator.SetBool("Moving", true);
+            _animator.SetBool(Moving, true);
         }
-        _rb.velocity = new Vector2(horizontal * _moveSpeed, _rb.velocity.y);
+        _rb.velocity = new Vector2(horizontal * MoveSpeed, _rb.velocity.y);
     }
 
     private void Jump()
@@ -156,7 +162,7 @@ public class AlphabetController : MonoBehaviour
                 _animator.CrossFadeInFixedTime("JumpUp", 0.1f);
                 _animator.SetBool("IsGrounded", false);
                 _grounded = false;
-                _rb.velocity = new Vector2(_rb.velocity.x, _jumpForce); 
+                _rb.velocity = new Vector2(_rb.velocity.x, JumpForce); 
                 _groundSensor.Disable(0.2f);
             }
         }
@@ -174,19 +180,22 @@ public class AlphabetController : MonoBehaviour
     }
 
     private void UseSkill() {
-        if(Input.GetKeyDown(KeyCode.I)) {
-            _animator.Play("UltimateAttack");
-            _isUsingSkill = true;
-            ActivateAttackPoint(4);
+        if (_grounded)
+        {
+            if(Input.GetKeyDown(KeyCode.I)) {
+                _animator.Play("UltimateAttack");
+                isUsingSkill = true;
+                ActivateAttackPoint(4);
+            }
         }
     }
 
     public void UseSkillDone() {
-        _isUsingSkill = false;
+        isUsingSkill = false;
     }
     
     public void AttackDone() {
-        _attacking = false;
+        attacking = false;
     }
 
     private void Death() {
@@ -195,29 +204,27 @@ public class AlphabetController : MonoBehaviour
         }
     }
 
-    private void Block() {
+    private void Defense() {
         if (!_grounded) return;
         if(Input.GetKey(KeyCode.K)) {
-            _blocking = true;
-            _animator.SetBool("Block", true);
+            blocking = true;
+            _animator.SetBool(Block, true);
             if (_blockDeltaTime < 0) {
-                _animator.SetBool("HoldBlock", true);
+                _animator.SetBool(HoldBlock, true);
             } else {
                 _blockDeltaTime -= Time.deltaTime;
-                _animator.SetBool("HoldBlock", false);
+                _animator.SetBool(HoldBlock, false);
             }
         } else {
-            _blocking = false;
-            _animator.SetBool("Block", false);
-            _animator.SetBool("HoldBlock", false);
+            blocking = false;
+            _animator.SetBool(Block, false);
+            _animator.SetBool(HoldBlock, false);
             _blockDeltaTime = 0.2f;
         }
     }
 
     public void TakeDamage() {
-        // if (_animator.GetCurrentAnimatorStateInfo(0).IsName("Idle")){
-        //     _animator.Play("TakeHit"); 
-        // }
+        _animator.SetTrigger("Take Hit");
         StartCoroutine(TakeDamageCoroutine());
     }
 

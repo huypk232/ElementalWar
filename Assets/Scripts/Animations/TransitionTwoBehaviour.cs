@@ -9,7 +9,7 @@ public class TransitionTwoBehaviour : StateMachineBehaviour
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         // PlayerController.instance.DeactivateAttackPoint(2);
-        AlphabetController.instance.DeactivateAttackPoint(2);
+        AlphabetController.Instance.DeactivateAttackPoint(2);
         ArrowController.instance.DeactivateAttackPoint(2);
     }
 
@@ -22,11 +22,11 @@ public class TransitionTwoBehaviour : StateMachineBehaviour
         //     PlayerController.instance.ChangeReceiveInputStatus();
         //     PlayerController.instance.inputReceived = false;
         // }
-        if (AlphabetController.instance.inputReceived) {
+        if (AlphabetController.Instance.inputReceived) {
             animator.SetTrigger("Attack3");
-            AlphabetController.instance.ActivateAttackPoint(3);
-            AlphabetController.instance.ChangeReceiveInputStatus();
-            AlphabetController.instance.inputReceived = false;
+            AlphabetController.Instance.ActivateAttackPoint(3);
+            AlphabetController.Instance.ChangeReceiveInputStatus();
+            AlphabetController.Instance.inputReceived = false;
         }
         if (ArrowController.instance.inputReceived) {
             animator.SetTrigger("Attack3");
@@ -41,7 +41,7 @@ public class TransitionTwoBehaviour : StateMachineBehaviour
     {
         // PlayerController.instance.AttackDone();
         if (animator.name == "Alphabet") {
-            AlphabetController.instance.AttackDone();
+            AlphabetController.Instance.AttackDone();
         } else if (animator.name == "Arrow") {
             ArrowController.instance.AttackDone();
         }

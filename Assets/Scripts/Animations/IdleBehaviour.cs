@@ -11,9 +11,9 @@ public class IdleBehaviour : StateMachineBehaviour
         // PlayerController.instance.DeactivateAttackPoint(0);
         // PlayerController.instance.DeactivateAttackPoint(3);
         // PlayerController.instance.AttackDone();
-        AlphabetController.instance.DeactivateAttackPoint(0);
-        AlphabetController.instance.DeactivateAttackPoint(3);
-        AlphabetController.instance.AttackDone();
+        AlphabetController.Instance.DeactivateAttackPoint(0);
+        AlphabetController.Instance.DeactivateAttackPoint(3);
+        AlphabetController.Instance.AttackDone();
         ArrowController.instance.DeactivateAttackPoint(0);
         ArrowController.instance.DeactivateAttackPoint(3);
         ArrowController.instance.AttackDone();
@@ -27,14 +27,14 @@ public class IdleBehaviour : StateMachineBehaviour
             ArrowController.instance.ActivateAttackPoint(1);
             ArrowController.instance.ChangeReceiveInputStatus();
             ArrowController.instance.inputReceived = false;
-        } else if(AlphabetController.instance.inputReceived && animator.name == "Alphabet") {
+        } else if(AlphabetController.Instance.inputReceived && animator.name == "Alphabet") {
             animator.SetTrigger("Attack1");
             // PlayerController.instance.ActivateAttackPoint(1);
             // PlayerController.instance.ChangeReceiveInputStatus();
             // PlayerController.instance.inputReceived = false;
-            AlphabetController.instance.ActivateAttackPoint(1);
-            AlphabetController.instance.ChangeReceiveInputStatus();
-            AlphabetController.instance.inputReceived = false;
+            AlphabetController.Instance.ActivateAttackPoint(1);
+            AlphabetController.Instance.ChangeReceiveInputStatus();
+            AlphabetController.Instance.inputReceived = false;
         }
     }
 
